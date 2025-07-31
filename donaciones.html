@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Donaciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-r from-blue-100 to-purple-100 flex justify-center items-center min-h-screen p-4">
+    <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md transition-transform hover:scale-105">
+        <h1 class="text-2xl font-semibold text-indigo-600 text-center mb-6">¡Apoya nuestro proyecto!</h1>
+        <p class="text-gray-700 text-center mb-4">Tu generosidad nos ayuda a mantener y mejorar este espacio.</p>
+
+        <div class="mb-4">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Donación Única</h2>
+            <div class="flex justify-center space-x-4">
+                <button onclick="donateWithPayPal(5)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out">5 €</button>
+                <button onclick="donateWithPayPal(10)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out">10 €</button>
+                <button onclick="donateWithPayPal(20)" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out">20 €</button>
+            </div>
+             <div class="mt-4 flex justify-center">
+                <input type="number" id="customAmount" placeholder="Otra cantidad" class="shadow appearance-none border rounded w-32 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline rounded-full text-center">
+            </div>
+            <div id="paypal-button-container" class="mt-4"></div> </div>
+
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Apoyo Mensual</h2>
+            <p class="text-gray-600 text-sm text-center mb-4">¡Conviértete en un patrocinador mensual y recibe beneficios exclusivos!</p>
+            <button onclick="subscribeWithPayPal()" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full shadow-md transition duration-300 ease-in-out w-full">Suscríbete por 5 €/mes</button>
+        </div>
+
+        <p class="text-gray-800 text-center text-lg font-semibold mt-6">¡Gracias por tu apoyo!</p>
+    </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AVfH1X6ICRd84s-WZp0rV4Ew2LJDD6d_UDa-8jMovHtJsPpl-5Yx7d6dV1Lvh5LWUBcQBu_gw4twh5dg&currency=EUR"></script> <script>
+        function donateWithPayPal(amount) {
+            paypal.Buttons({
+                style: {
+                    layout:  'horizontal',
+                    size:   'medium',
+                    shape:  'pill',
+                    color:  'gold'
+                },
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: amount
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        alert('¡Transacción completada por ' + details.payer.name.given_name + '!');
+                        // Aquí puedes enviar la información de la transacción a tu servidor
+                    });
+                },
+                 onError: function(err) {
+                    // Muestra un mensaje de error al usuario
+                    alert('Ocurrió un error al procesar tu pago con PayPal. Por favor, inténtalo de nuevo.');
+                    console.error(err);  // Para ver el error en la consola del navegador
+                }
+            }).render('#paypal-button-container'); // Renderiza el botón en el contenedor
+        }
+
+        function subscribeWithPayPal() {
+            alert("Lo sentimos, la suscripción mensual con PayPal aún no está implementada.  Estamos trabajando para ofrecer esta opción pronto.");
+            // Aquí iría la lógica para iniciar una suscripción mensual con PayPal
+            // Necesitarías crear un plan de suscripción en tu cuenta de PayPal y usar su API.
+        }
+
+        document.getElementById('customAmount').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                let amount = parseFloat(this.value);
+                if (!isNaN(amount) && amount > 0) {
+                    donateWithPayPal(amount);
+                } else {
+                    alert("Por favor, introduce una cantidad válida.");
+                }
+            }
+        });
+    </script>
+</body>
+</html>
